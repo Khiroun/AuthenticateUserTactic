@@ -1,0 +1,134 @@
+/**
+ * JavaCC template file created by SF JavaCC plugin 1.5.28+ wizard for JavaCC 1.5.0+
+ */
+options
+{
+  static = true;
+}
+
+PARSER_BEGIN(AuthenticateUserTacticGrammar)
+import java.util.ArrayList;
+import java.util.HashMap;
+import java.util.Map;
+import java.util.Iterator;
+import java.util.Set;
+public class AuthenticateUserTacticGrammar
+{
+
+  public static Map<String, String> map = new HashMap();
+  public static Token exceptionHandlingCallee;
+
+  public static Map<String, String> tacticParticipatingObjects = new HashMap();
+  public static int numberofChecks = 0;
+  
+  public static void main(String args []) throws ParseException
+  {
+    
+    
+    try {
+	    AuthenticateUserTacticGrammar parser = new AuthenticateUserTacticGrammar(new java.io.FileInputStream("C:\\Users\\W540\\Documents\\PFE\\CODE\\tacticsGrammars\\AuthenticateUser\\AuthenticateUser.txt"));
+	    try
+			  { 
+			     parser.AuthenticateUser();
+			     
+				  if(!tacticParticipatingObjects.isEmpty())
+			     {   System.out.println("Tactic participating objects: ");
+			         Set keys = tacticParticipatingObjects.keySet();
+						Iterator it = keys.iterator();
+						for(String key : tacticParticipatingObjects.keySet())
+						{
+						  String value = tacticParticipatingObjects.get(key);
+						  System.out.println(key + " -- > " + value);
+						}
+
+					  System.out.println("Number of checks: "+numberofChecks);
+					
+			     }
+			
+			   } catch (Exception e) {
+			
+			      System.out.println("Oops.");
+			
+			      System.out.println(e.getMessage());
+			
+			      e.printStackTrace();
+		
+		        }
+   
+    }catch(Exception e)
+   { }
+  }
+}
+
+PARSER_END(AuthenticateUserTacticGrammar)
+
+SKIP :
+{
+"\t"
+| "\n"
+| "\r"
+}
+
+
+TOKEN : {< LITERAL : (["a"-"z", "A"-"Z"])+ >}
+
+TOKEN :
+{< OBJ : (["a"-"z"])+ >}
+TOKEN :
+{< Method_Signature: "~"(["a"-"z"])+ > }
+TOKEN :
+{< OBJJ : (["a"-"z"])+ >}
+TOKEN :
+{< CALLER :"CALLER:">}
+TOKEN :
+{< CALLEE :"CALLEE:">}
+TOKEN :
+{< METHOD :"METHOD:">}
+TOKEN :
+{< COMMA :",">}
+TOKEN :
+{< COMMAP :";">}
+
+
+void AuthenticateUser(): { }
+{
+   A() B() (AuthenticateUser())*
+}
+
+void A(): { Token caller, callee;}
+{   { System.out.println("In A: ");}
+    <CALLER>
+    caller = <LITERAL> {map.put("caller", caller.image); }
+    <COMMA> M()
+    callee = <LITERAL> {map.put("callee", callee.image); }
+    <COMMAP>
+    { System.out.println(caller.image+" -> "+callee.image);}
+}
+
+void B(): { Token caller, callee;}
+{    { System.out.println("In B: ");}
+   LOOKAHEAD({getToken(2).image.equals(map.get("callee"))})
+   (
+    <CALLER>
+    caller = <LITERAL>
+    <COMMA> M()
+    callee = <LITERAL>
+    {if(!callee.image.equals(map.get("callee"))) {throw new ParseException("B2; Not expected callee");
+     /* Start an instance of a new parser*/ }
+     else
+     {
+       tacticParticipatingObjects.put("Authenticator", callee.image);
+       tacticParticipatingObjects.put("Client", map.get("caller"));
+       numberofChecks++;
+     }
+     }
+    <COMMAP>
+     { System.out.println(caller.image+" -> "+callee.image);}
+   )
+   | AuthenticateUser()
+}
+
+void M(): {}
+{ <METHOD> <LITERAL> <COMMA> <CALLEE> }
+
+

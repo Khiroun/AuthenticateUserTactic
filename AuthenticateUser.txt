@@ -1,0 +1,4 @@
+CALLER:client,METHOD:requestAuthentication,CALLEE:authenticator;
+CALLER:authenticator,METHOD:checkAuthentication,CALLEE:authenticator;
+CALLER:client,METHOD:requestAuthentication,CALLEE:authenticator;
+CALLER:authenticator,METHOD:checkAuthentication,CALLEE:authenticator;
